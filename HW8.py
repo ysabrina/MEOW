@@ -52,7 +52,35 @@ def plot_rest_categories(db):
     restaurant categories and the values should be the number of restaurants in each category. The function should
     also create a bar chart with restaurant categories and the count of number of restaurants in each category.
     """
-    pass
+    sourcedir_meow = os.path.dirname(__file__)
+    path_meow = os.path.join(sourcedir_meow, db)
+    con = sqlite3.connect(db)
+
+    cur = con.cursor()
+
+    cur.execute("""SELECT categories.category, COUNT(restaurants.category_id)
+        FROM restaurants
+        JOIN categories ON categories.id = restaurants.category_id
+        GROUP BY category""")
+    
+    variable_meow = cur.fetchall() #i like naming my variables silly things they will all be meow today :)
+    dicty = dict(variable_meow)
+    better_dicty = dict(sorted(dicty.items(), key = lambda t: t[1], reverse = True))
+    #print(better_dicty)
+
+    keyz = list(better_dicty.keys())
+    valuez = list(better_dicty.values())
+
+    plt.figure(figsize = (25,8))
+    plt.bar(keyz,valuez)
+    plt.title("Types of Restaurant on S University Ave")
+    plt.xlabel("# of Restaurants") 
+    plt.ylabel("Restaurant Categories")
+    
+    #print(better_dicty)    
+    plt.show()
+
+    return dicty
 
 def find_rest_in_building(building_num, db):
     '''
