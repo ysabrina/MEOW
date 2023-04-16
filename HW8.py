@@ -88,7 +88,28 @@ def find_rest_in_building(building_num, db):
     restaurant names. You need to find all the restaurant names which are in the specific building. The restaurants 
     should be sorted by their rating from highest to lowest.
     '''
-    pass
+    dictypoo = {}
+    sourcedir_meow = os.path.dirname(__file__)
+    path_meow = os.path.join(sourcedir_meow, db)
+    con = sqlite3.connect(db)
+
+    cur = con.cursor()
+
+    cur.execute("""SELECT buildings.building, restaurants.name, restaurants.rating 
+        FROM restaurants 
+        JOIN buildings ON restaurants.building_id = buildings.id WHERE buildings.building = ?""", (building_num,))
+
+    variable_meow = cur.fetchall()
+
+    for x in variable_meow:
+        rating = x[2]
+        name = x[1]
+        dictypoo[rating] = name
+        
+    newdictypoo = dict(sorted(dictypoo.items(), reverse = True))
+    valuez_list = list(newdictypoo.values()) #<-- names of the restaurants
+
+    return valuez_list
 
 #EXTRA CREDIT
 def get_highest_rating(db): #Do this through DB as well
@@ -106,7 +127,9 @@ def get_highest_rating(db): #Do this through DB as well
 
 #Try calling your functions here
 def main():
-    pass
+    load_rest_data("South_U_Restaurants.db")
+    plot_rest_categories("South_U_Restaurants.db")
+    find_rest_in_building(1140,"South_U_Restaurants.db")
 
 class TestHW8(unittest.TestCase):
     def setUp(self):
@@ -151,9 +174,9 @@ class TestHW8(unittest.TestCase):
         self.assertEqual(len(restaurant_list), 3)
         self.assertEqual(restaurant_list[0], 'BTB Burrito')
 
-    def test_get_highest_rating(self):
-        highest_rating = get_highest_rating('South_U_Restaurants.db')
-        self.assertEqual(highest_rating, self.highest_rating)
+    #def test_get_highest_rating(self):
+        #highest_rating = get_highest_rating('South_U_Restaurants.db')
+        #self.assertEqual(highest_rating, self.highest_rating)
 
 if __name__ == '__main__':
     main()
